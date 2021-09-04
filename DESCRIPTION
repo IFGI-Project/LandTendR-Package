@@ -2,10 +2,12 @@ Package: LandTrendR
 Type: Package
 Title: LandTrendR Algorithm in R
 Date: 2015-01-01
-Version: 0.1.0
+Version: 0.1
 Author: Jorge Herrera
-Maintainer: jherrera@unimuenster.de
-Description: The package reproduce the algorithm LandTrendr created by Juan Perez at the Oregon university.
+Maintainer: Jorge Herrera <jherrera@unimuenster.de>
+Description: The description of a package is usually long,
+    spanning multiple lines. The second and subsequent lines
+    should be indented, usually with four spaces.
 License: MIT
 Encoding: UTF-8
 LazyData: true
