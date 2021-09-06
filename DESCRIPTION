@@ -5,10 +5,7 @@ Date: 2015-01-01
 Version: 1.0
 Author: Jorge Herrera
 Maintainer: Jorge Herrera <jherrera@unimuenster.de>
-Description: The package help users to run Landtr Algorithm in R, this package use GEE python API and requieres the user to have a 
-             GEE account. The package creates a Collection with all the preprocessing and Hamornizationg required to run Landtrendr,
-             also allows the user to have control on the main parameters for the algorithm and the ImageCollection creation. 
-             NOTE: BEFORE INSTALLING THE APP Initialize GEE
+Description: The package help users to run Landtr Algorithm in R, this package use GEE python API and requieres the user to have a GEE account. The package creates a Collection with all the preprocessing and Hamornizationg required to run Landtrendr, also allows the user to have control on the main parameters for the algorithm and the ImageCollection creation. NOTE: BEFORE INSTALLING THE APP INITIALIZE GEE.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
