@@ -2,12 +2,19 @@ Package: LandTrendR
 Type: Package
 Title: LandTrendR Algorithm in R
 Date: 2015-01-01
-Version: 0.1
+Version: 1.0
 Author: Jorge Herrera
 Maintainer: Jorge Herrera <jherrera@unimuenster.de>
-Description: The description of a package is usually long,
-    spanning multiple lines. The second and subsequent lines
-    should be indented, usually with four spaces.
-License: MIT
+Description: The package help users to run Landtr Algorithm in R, this package use GEE python API and requieres the user to have a 
+             GEE account. The package creates a Collection with all the preprocessing and Hamornizationg required to run Landtrendr,
+             also allows the user to have control on the main parameters for the algorithm and the ImageCollection creation. 
+             NOTE: BEFORE INSTALLING THE APP Initialize GEE
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
+RoxygenNote: 7.1.1
+Imports:
+  rgee (>= 1.1.0),
+  sf (>= 1.0-2),
+  reticulate (>= 1.20),
+  geojsonio (>= 0.9.4)
