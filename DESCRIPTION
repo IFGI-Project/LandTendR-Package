@@ -1,7 +1,6 @@
 Package: LandTrendR
 Type: Package
 Title: LandTrendR Algorithm in R
-Date: 2015-01-01
 Version: 1.0
 Author: Jorge Herrera
 Maintainer: Jorge Herrera <jherrera@unimuenster.de>
@@ -9,9 +8,15 @@ Description: The package help users to run Landtr Algorithm in R, this package u
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
+Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
+Depends: R (>= 3.3.0)
 Imports:
-  rgee (>= 1.1.0),
-  sf (>= 1.0-2),
-  reticulate (>= 1.20),
-  geojsonio (>= 0.9.4)
+    rgee (>= 1.1.0),
+    sf (>= 1.0-2),
+    reticulate (>= 1.20),
+    geojsonio (>= 0.9.4)
+Suggests: 
+    rmarkdown,
+    knitr
+VignetteBuilder: knitr
