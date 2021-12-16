@@ -1,0 +1,21 @@
+---
+title: "Use of LandTrendR package"
+output: rmarkdown::html_vignette
+author: "Jorge Herrera"
+date: "16 12 2021"
+vignette: >
+  %\VignetteIndexEntry{LandTrendR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(LandTrendR)
+```
