@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-## Package set up
+## Package Configuration
 
 This package requires configuration before going live. As it is based on the RGEE library it has a different environment configuration. The first step is to install the package:
 
@@ -27,18 +27,27 @@ library(LandTrendR)
 Before using it, a virtual environment must be generated for the python dependencies to work correctly. 
 
 ```{r virtualenv, eval=FALSE}
-rgee::ee_install()
+rgee::ee_install() # Install python environment required for GEE
 ```
 
 If you have any problems, please clear the virtual environment cache of rgee with the following command 
 
 ```{r cleaning, eval=FALSE}
-rgee::ee_clean_pyenv()
+rgee::ee_clean_pyenv() # cleaning previous python environment (use it with precaution)
 ```
 
-And restart the R version if the issue persists.
+And restart the R version if the issue persists. 
 
-## First steps
+Now, before jumping into LandTrendR, it is required one more step to prepared the environments to GEE. 
+
+```{r cleaning, eval=FALSE}
+rgee::ee_Initialize() # Getting credentials from GEE to use their capabilities
+```
+
+## Getting started
+
+### Initialize your GEE acount
+
 
 
 

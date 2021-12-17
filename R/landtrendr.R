@@ -1,39 +1,81 @@
+## Creating Global Environment for Initial test
+pkg.globals <- new.env()
+
+## Initial message for Users
 .onAttach <- function(libname, pkgname) {
   packageStartupMessage("LandTrendr in  R.")
+  packageStartupMessage("------------------------------------------")
   packageStartupMessage("This package execute LandtrendR algorithm based on GEE library")
   packageStartupMessage("As requirements ee_install will be run")
   packageStartupMessage("in addition an initialization of GEE is required")
 }
 
-pkg.env <- new.env()
+## Global variables setup
+##
+## @description  In this section the global parameters for initial config are setup
+##
+## @param aoi_ Initial Area Of Interest
+## @param distDir Parameter of Direction
+## @param global_sensor parameter of the sensor to use (e.g L08)
+## @param global_median_calcDif mean calculated based on the Collection
+## @param indexNameFTV Initialize the FTV param
+## @param runParam Initial config for segmentation process
+## @param dummyCollection Initialize the a collection of zeros
 
-defaultAOI <- function(){
-  pkg.env$filename <- system.file("shape/nc.shp", package="sf")
-  pkg.env$nc <- sf::st_read(filename)
-  pkg.env$sel <- c(12)
-  pkg.env$aoi_ <- sf::st_geometry(nc[sel,])
-  pkg.env$aoi_ <- rgee::sf_as_ee(aoi_)
+rgee::ee_Initialize()
+pkg.globals$filename <- system.file("shape/nc.shp", package="sf")
+pkg.globals$nc <- sf::st_read(pkg.globals$filename)
+pkg.globals$aoi_ <- sf::st_geometry(pkg.globals$nc[c(12),])
+pkg.globals$aoi_ <- rgee::sf_as_ee(pkg.globals$aoi_)
+
+pkg.globals$distDir = -1
+pkg.globals$global_sensor = NULL
+pkg.globals$global_median_calcDif = NULL
+pkg.globals$indexNameFTV = NULL
+pkg.globals$runParam = list(
+    maxSegments = 6,
+    spikeThreshold = 0.9,
+    vertexCountOvershoot = 3,
+    preventOneYearRecovery =  TRUE,
+    recoveryThreshold = 0.25,
+    pvalThreshold = 0.05,
+    bestModelProportion = 0.75,
+    minObservationsNeeded= 6)
+
+pkg.globals$dummyCollection = rgee::ee$ImageCollection(c(rgee::ee$Image(c(0,0,0,0,0,0))$mask(rgee::ee$Image(0))))
+
+######################## CLASS METHODS ########################
+
+#' Set a new AOI
+#'
+#' @description This function allows to set up a new Area of Interest
+#'
+#' @param aoi_ new Area of Interest, should be a sf geometry
+#' @export
+#'
+setAOI <- function(aoi_){
+  pkg.globals$aoi_ <- rgee::sf_as_ee(aoi_)
 }
 
-globalParameters <-  function()
+#' LandTrendR running Parameter
+#'
+#' @description The function will change the initial parameters to process the algorithm
+#'
+#' @param param List of parameter
+#' @examples
+#' list( maxSegments = 6,
+#' spikeThreshold = 0.9,
+#' vertexCountOvershoot = 3,
+#' preventOneYearRecovery =  TRUE,
+#' recoveryThreshold = 0.25,
+#' pvalThreshold = 0.05,
+#' bestModelProportion = 0.75,
+#' minObservationsNeeded= 6)
+#' @export
+#'
+setParameters <-  function(param)
 {
-  pkg.env$me <- list(
-    aoi_ = defaultAOI(),
-    distDir = -1,
-    global_sensor = NULL,
-    global_median_calcDif = NULL,
-    indexNameFTV = NULL,
-    runParam = list(
-      maxSegments = 6,
-      spikeThreshold = 0.9,
-      vertexCountOvershoot = 3,
-      preventOneYearRecovery =  TRUE,
-      recoveryThreshold = 0.25,
-      pvalThreshold = 0.05,
-      bestModelProportion = 0.75,
-      minObservationsNeeded= 6),
-    dummyCollection = rgee::ee$ImageCollection(c(rgee::ee$Image(c(0,0,0,0,0,0))$mask(rgee::ee$Image(0))))
-  )
+  pkg.globals$runParam <- param
 }
 
 #' Harmonize L8 images
@@ -55,9 +97,9 @@ harmonizationRoy <- function(oli){
 #' @description This function change dynamically all the sensor variables during the process.
 #'
 #' @param sensor string variable that refers to the sensor name in GEE syntaxis (i.e L08,L07,L05)
-#'
+#' @export
 set_global_sensor <- function(sensor){
-  global_sensor <- sensor
+  pkg.globals$global_sensor <- sensor
 }
 
 #' Image preparation function
@@ -69,7 +111,7 @@ set_global_sensor <- function(sensor){
 prepImages <- function(img){
   dat <- rgee::ee$Image(
     rgee::ee$Algorithms$If(
-      global_sensor == 'LC08',
+      pkg.globals$global_sensor == 'LC08',
       harmonizationRoy(img$unmask()),
       img$select(c('B1', 'B2', 'B3', 'B4', 'B5', 'B7'))$unmask()$resample('bicubic')$set('system:time_start', img$get('system:time_start'))
     )
@@ -123,7 +165,7 @@ getCombinedSRcollection <- function(year, startDay, endDay, aoi){
 #' @param finalCollection this parameter is automatically and refers to each year image in the construction of mosaics
 #'
 set_global_median_calcDif <- function(finalCollection){
-  global_median_calcDif <<- finalCollection$median()
+  pkg.globals$global_median_calcDif <<- finalCollection$median()
 }
 
 #' Difference calculation from Medoid function
@@ -131,9 +173,9 @@ set_global_median_calcDif <- function(finalCollection){
 #' @description This function change dynamically and calculates de Difference image from Medoid fuction
 #'
 #' @param img ee.Image
-#'
+#' @return  reduced Image ee_Image
 calcDifFromMed <- function(img){
-  diff <- rgee::ee$Image(img)$subtract(global_median_calcDif)$pow(rgee::ee$Image$constant(2))
+  diff <- rgee::ee$Image(img)$subtract(pkg.globals$global_median_calcDif)$pow(rgee::ee$Image$constant(2))
   return(diff$reduce('sum')$addBands(img))
 }
 
@@ -162,7 +204,7 @@ medoidMosaic <- function(inCollection, dummyCollection){
 #' @param aoi this parameter refers Area Of Interest and constrain the retrieve images to the AOI.
 #' @param dummyCollection empty ee.ImageCollection filled with zeros
 #' @return ee.Image
-
+#'
 buildMosaic <- function(year, startDay, endDay, aoi, dummyCollection){
   collection <- getCombinedSRcollection(year, startDay, endDay, aoi)
   time_Start <- datetime$date(as.integer(year),as.integer(8),as.integer(1))
@@ -213,7 +255,7 @@ segIndex <- function(img){
 #' @return ee.Image
 
 invertIndex <- function(img){
-  return(img$multiply(distDir)$toShort()$set('system:time_start', img$get('system:time_start')))
+  return(img$multiply(pkg.globals$distDir)$toShort()$set('system:time_start', img$get('system:time_start')))
 
 }
 
@@ -225,7 +267,7 @@ invertIndex <- function(img){
 #' @return ee.Image
 #'
 invertFTV <- function(img){
-  return(img$addBands(img$select(0)$rename(indexNameFTV)$multiply(distDir))$toShort()$set('system:time_start', img$get('system:time_start')))
+  return(img$addBands(img$select(0)$rename(pkg.globals$indexNameFTV)$multiply(pkg.globals$distDir))$toShort()$set('system:time_start', img$get('system:time_start')))
 }
 
 #################################################### EXPORT FUNCTION DEFINITION ########################################
@@ -240,7 +282,7 @@ invertFTV <- function(img){
 getLTvertStack <- function(LTresult){
   emptyArray <- list()
   vertLabels <- list()
-  for(i in seq(1, runParam['maxSegments'][[1]]+2)){
+  for(i in seq(1, pkg.globals$runParam['maxSegments'][[1]]+2)){
     label <- paste("vert_",as.character(i),sep = "")
     vertLabels <- c(vertLabels, label)
   }
@@ -255,8 +297,6 @@ getLTvertStack <- function(LTresult){
   vmask <- LTresult$arraySlice(0,3,4)
 
   ltVertStack <- LTresult$arrayMask(vmask)$arraySlice(0, 0, 3)$addBands(zeros)$toArray(1)
-  #$arraySlice(1, 0, as.integer(runParam['maxSegments'][[1]]+1))
-  #$arrayFlatten(lbls, '')
 
   return(ltVertStack)
 }
@@ -275,13 +315,14 @@ getLTvertStack <- function(LTresult){
 #' @param runParams Parameters for Landtrendr Analysis - By default the  package take the following values: maxSegments = 6, spikeThreshold = 0.9, vertexCountOvershoot = 3, preventOneYearRecovery =  TRUE,recoveryThreshold = 0.25, pvalThreshold = 0.05, bestModelProportion = 0.75, minObservationsNeeded= 6
 #' @return lt ee.Image object
 #' @export
-LtRun <- function(startYear = 2010, endYear = 2017, startDay = '06-01', endDay = '09-30', aoi= aoi_, runParams = runParam){
+#'
+LtRun <- function(startYear = 2010, endYear = 2017, startDay = '06-01', endDay = '09-30', aoi= pkg.globals$aoi_, runParams = pkg.globals$runParam){
   # build annual image collection and run LandTrendr
-  annualSRcollection <- buildMosaicCollection(startYear, endYear, startDay, endDay, aoi, dummyCollection)
+  annualSRcollection <- buildMosaicCollection(startYear, endYear, startDay, endDay, aoi, pkg.globals$dummyCollection)
 
   annualIndexCollection <- annualSRcollection$map(segIndex)$map(invertIndex)
 
-  indexNameFTV <<- paste("NBR","_FTV", sep = "")
+  pkg.globals$indexNameFTV <<- paste("NBR","_FTV", sep = "")
 
   ltCollection = annualIndexCollection$map(invertFTV)
 
