@@ -2,3 +2,6 @@
 
 export(LtRun)
 export(getLTvertStack)
+export(setAOI)
+export(setParameters)
+export(set_global_sensor)

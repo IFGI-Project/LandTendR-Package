@@ -9,6 +9,9 @@ calcDifFromMed(img)
 \arguments{
 \item{img}{ee.Image}
 }
+\value{
+reduced Image ee_Image
+}
 \description{
 This function change dynamically and calculates de Difference image from Medoid fuction
 }

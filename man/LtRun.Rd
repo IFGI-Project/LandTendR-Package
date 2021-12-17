@@ -9,8 +9,8 @@ LtRun(
   endYear = 2017,
   startDay = "06-01",
   endDay = "09-30",
-  aoi = aoi_,
-  runParams = runParam
+  aoi = pkg.globals$aoi_,
+  runParams = pkg.globals$runParam
 )
 }
 \arguments{
