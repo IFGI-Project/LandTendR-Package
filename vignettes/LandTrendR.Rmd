@@ -1,5 +1,5 @@
 ---
-title: "Use of LandTrendR package"
+title: "How to use LandTrendR package"
 output: rmarkdown::html_vignette
 author: "Jorge Herrera"
 date: "16 12 2021"
@@ -16,6 +16,31 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
+## Package set up
+
+This package requires configuration before going live. As it is based on the RGEE library it has a different environment configuration. The first step is to install the package:
+
+```{r setup, eval=FALSE}
 library(LandTrendR)
 ```
+
+Before using it, a virtual environment must be generated for the python dependencies to work correctly. 
+
+```{r virtualenv, eval=FALSE}
+rgee::ee_install()
+```
+
+If you have any problems, please clear the virtual environment cache of rgee with the following command 
+
+```{r cleaning, eval=FALSE}
+rgee::ee_clean_pyenv()
+```
+
+And restart the R version if the issue persists.
+
+## First steps
+
+
+
+
+  

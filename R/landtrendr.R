@@ -1,39 +1,41 @@
-time <- reticulate::import("time")
-datetime <- reticulate::import("datetime")
-
-rgee::ee_Initialize()
-
-# Geometry Parameter
-filename <- system.file("shape/nc.shp", package="sf")
-nc <- sf::st_read(filename)
-sel <- c(12)
-aoi_ <- sf::st_geometry(nc[sel,])
-aoi_ <- rgee::sf_as_ee(aoi_)
-
-# Global parameter definition
-distDir <- -1
-global_sensor <- NULL
-global_median_calcDif <- NULL
-indexNameFTV <- NULL
-set_distDir <- function(dist){
-    distDir <- dist
+.onAttach <- function(libname, pkgname) {
+  packageStartupMessage("LandTrendr in  R.")
+  packageStartupMessage("This package execute LandtrendR algorithm based on GEE library")
+  packageStartupMessage("As requirements ee_install will be run")
+  packageStartupMessage("in addition an initialization of GEE is required")
 }
 
-# Definition of runParameters
-runParam<- list(
-  maxSegments = 6,
-  spikeThreshold = 0.9,
-  vertexCountOvershoot = 3,
-  preventOneYearRecovery =  TRUE,
-  recoveryThreshold = 0.25,
-  pvalThreshold = 0.05,
-  bestModelProportion = 0.75,
-  minObservationsNeeded= 6)
+pkg.env <- new.env()
 
-# dummyCollection
-dummyCollection <- rgee::ee$ImageCollection(c(rgee::ee$Image(c(0,0,0,0,0,0))$mask(rgee::ee$Image(0))))
+defaultAOI <- function(){
+  pkg.env$filename <- system.file("shape/nc.shp", package="sf")
+  pkg.env$nc <- sf::st_read(filename)
+  pkg.env$sel <- c(12)
+  pkg.env$aoi_ <- sf::st_geometry(nc[sel,])
+  pkg.env$aoi_ <- rgee::sf_as_ee(aoi_)
+}
 
-################################## HIDDEN FUNCTION DEFINITIONS #############################################
+globalParameters <-  function()
+{
+  pkg.env$me <- list(
+    aoi_ = defaultAOI(),
+    distDir = -1,
+    global_sensor = NULL,
+    global_median_calcDif = NULL,
+    indexNameFTV = NULL,
+    runParam = list(
+      maxSegments = 6,
+      spikeThreshold = 0.9,
+      vertexCountOvershoot = 3,
+      preventOneYearRecovery =  TRUE,
+      recoveryThreshold = 0.25,
+      pvalThreshold = 0.05,
+      bestModelProportion = 0.75,
+      minObservationsNeeded= 6),
+    dummyCollection = rgee::ee$ImageCollection(c(rgee::ee$Image(c(0,0,0,0,0,0))$mask(rgee::ee$Image(0))))
+  )
+}
+
 #' Harmonize L8 images
 #'
 #' @description This function harmonized the L8 image as the sensor has different specification as L5 and L7
@@ -42,10 +44,10 @@ dummyCollection <- rgee::ee$ImageCollection(c(rgee::ee$Image(c(0,0,0,0,0,0))$mas
 #' @return oli_harmonized ee.Image object
 #'
 harmonizationRoy <- function(oli){
-   slopes = rgee::ee$Image$constant(c(0.9785, 0.9542, 0.9825, 1.0073, 1.0171, 0.9949))
-   itcp <- rgee::ee$Image$constant(c(-0.0095, -0.0016, -0.0022, -0.0021, -0.0030, 0.0029))
-   oli_harmonized <- oli$select(c('B2','B3','B4','B5','B6','B7'),c('B1', 'B2', 'B3', 'B4', 'B5', 'B7'))$resample('bicubic')$subtract(itcp$multiply(10000))$divide(slopes)$set('system:time_start', oli$get('system:time_start'))$toShort()
-   return(oli_harmonized)
+  slopes = rgee::ee$Image$constant(c(0.9785, 0.9542, 0.9825, 1.0073, 1.0171, 0.9949))
+  itcp <- rgee::ee$Image$constant(c(-0.0095, -0.0016, -0.0022, -0.0021, -0.0030, 0.0029))
+  oli_harmonized <- oli$select(c('B2','B3','B4','B5','B6','B7'),c('B1', 'B2', 'B3', 'B4', 'B5', 'B7'))$resample('bicubic')$subtract(itcp$multiply(10000))$divide(slopes)$set('system:time_start', oli$get('system:time_start'))$toShort()
+  return(oli_harmonized)
 }
 
 #' Dynamic Sensor variable
@@ -287,16 +289,13 @@ LtRun <- function(startYear = 2010, endYear = 2017, startDay = '06-01', endDay =
   runParams <- c(runParams,timeSeries=ltCollection)
 
   lt <- rgee::ee$Algorithms$TemporalSegmentation$LandTrendr(ltCollection,
-                                                      runParams['maxSegments'][[1]],
-                                                      runParams['spikeThreshold'][[1]],
-                                                      runParams['vertexCountOvershoot'][[1]],
-                                                      runParams['preventOneYearRecovery'][[1]],
-                                                      runParams['recoveryThreshold'][[1]],
-                                                      runParams['pvalThreshold'][[1]],
-                                                      runParams['bestModelProportion'][[1]],
-                                                      runParams['minObservationsNeeded'][[1]])
+                                                            runParams['maxSegments'][[1]],
+                                                            runParams['spikeThreshold'][[1]],
+                                                            runParams['vertexCountOvershoot'][[1]],
+                                                            runParams['preventOneYearRecovery'][[1]],
+                                                            runParams['recoveryThreshold'][[1]],
+                                                            runParams['pvalThreshold'][[1]],
+                                                            runParams['bestModelProportion'][[1]],
+                                                            runParams['minObservationsNeeded'][[1]])
   return(lt)
 }
-
-
-

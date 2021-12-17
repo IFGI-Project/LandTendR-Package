@@ -18,5 +18,6 @@ Imports:
     geojsonio (>= 0.9.4)
 Suggests: 
     rmarkdown,
-    knitr
+    knitr,
+    qpdf
 VignetteBuilder: knitr
