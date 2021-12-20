@@ -429,13 +429,6 @@
       "Repository": "CRAN",
       "Hash": "61e4a10781dd00d7d81dd06ca9b94e95"
     },
-    "mgcv": {
-      "Package": "mgcv",
-      "Version": "1.8-31",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "4bb7e0c4f3557583e1e8d3c9ffb8ba5c"
-    },
     "mime": {
       "Package": "mime",
       "Version": "0.12",
@@ -449,13 +442,6 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "6dfe8bf774944bd5595785e3229d8771"
-    },
-    "nlme": {
-      "Package": "nlme",
-      "Version": "3.1-144",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "e80d41932d3cc235ccbbbb9732ae162e"
     },
     "pillar": {
       "Package": "pillar",
