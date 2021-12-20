@@ -22,6 +22,8 @@ pkg.globals <- new.env()
 ## @param dummyCollection Initialize the a collection of zeros
 
 rgee::ee_Initialize()
+pkg.globals$time <- reticulate::import("time")
+pkg.globals$datetime <- reticulate::import("datetime")
 pkg.globals$filename <- system.file("shape/nc.shp", package="sf")
 pkg.globals$nc <- sf::st_read(pkg.globals$filename)
 pkg.globals$aoi_ <- sf::st_geometry(pkg.globals$nc[c(12),])
@@ -206,7 +208,7 @@ medoidMosaic <- function(inCollection, dummyCollection){
 #'
 buildMosaic <- function(year, startDay, endDay, aoi, dummyCollection){
   collection <- getCombinedSRcollection(year, startDay, endDay, aoi)
-  time_Start <- datetime$date(as.integer(year),as.integer(8),as.integer(1))
+  time_Start <- pkg.globals$datetime$date(as.integer(year),as.integer(8),as.integer(1))
   img <- medoidMosaic(collection, dummyCollection)$set('system:time_start', as.numeric(as.POSIXct(time_Start)))
   return(rgee::ee$Image(img))
 }
@@ -228,7 +230,7 @@ buildMosaicCollection <- function(startYear, endYear, startDay, endDay, aoi, dum
   imgs = list()
   for (year in seq(startYear,endYear+1)){
     tmp <- buildMosaic(year, startDay, endDay, aoi, dummyCollection)
-    time_Start <- datetime$date(as.integer(year),as.integer(8),as.integer(1))
+    time_Start <- pkg.globals$datetime$date(as.integer(year),as.integer(8),as.integer(1))
     imgs <-c(imgs,tmp$set('system:time_start', as.numeric(as.POSIXct(time_Start))))
   }
   return(rgee::ee$ImageCollection(imgs))
