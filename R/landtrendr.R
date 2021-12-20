@@ -6,8 +6,7 @@ pkg.globals <- new.env()
   packageStartupMessage("LandTrendr in  R.")
   packageStartupMessage("------------------------------------------")
   packageStartupMessage("This package execute LandtrendR algorithm based on GEE library")
-  packageStartupMessage("As requirements ee_install will be run")
-  packageStartupMessage("in addition an initialization of GEE is required")
+  packageStartupMessage("ee_install will be run and a initialization of GEE is required")
 }
 
 ## Global variables setup
