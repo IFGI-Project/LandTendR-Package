@@ -26,8 +26,8 @@ pkg.globals$time <- reticulate::import("time")
 pkg.globals$datetime <- reticulate::import("datetime")
 pkg.globals$filename <- system.file("shape/nc.shp", package="sf")
 pkg.globals$nc <- sf::st_read(pkg.globals$filename)
-pkg.globals$aoi_ <- sf::st_geometry(pkg.globals$nc[c(12),])
-pkg.globals$aoi_ <- rgee::sf_as_ee(pkg.globals$aoi_)
+pkg.globals$aoi <- sf::st_geometry(pkg.globals$nc[c(12),])
+pkg.globals$aoi_ <- rgee::sf_as_ee(pkg.globals$aoi)
 
 pkg.globals$distDir = -1
 pkg.globals$global_sensor = NULL
@@ -318,6 +318,7 @@ getLTvertStack <- function(LTresult){
 #' @export
 #'
 LtRun <- function(startYear = 2010, endYear = 2017, startDay = '06-01', endDay = '09-30', aoi= pkg.globals$aoi_, runParams = pkg.globals$runParam){
+  rgee::ee_Initialize()
   # build annual image collection and run LandTrendr
   annualSRcollection <- buildMosaicCollection(startYear, endYear, startDay, endDay, aoi, pkg.globals$dummyCollection)
 

@@ -22,7 +22,6 @@ options(rmarkdown.html_vignette.check_title=FALSE)
 This package requires configuration before going live. As it is based on the RGEE library it has a different environment configuration. The first step is to install the package:
 
 ```{r setup, eval=FALSE}
-library(rgee) # If required 
 library(LandTrendR) #OPTIONAL
 ```
 
@@ -48,10 +47,11 @@ rgee::ee_Initialize() # Getting credentials from GEE to use their capabilities
 
 ## Getting started
 
-### Initialize your GEE acount
+### First Run - Default Parameters
 
-
-
+```{r firstRun, eval=FALSE}
+  LandTrendR::LtRun()
+```
 
 
   
