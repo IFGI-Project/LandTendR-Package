@@ -21,8 +21,8 @@ options(rmarkdown.html_vignette.check_title=FALSE)
 
 This package requires configuration before going live. As it is based on the RGEE library it has a different environment configuration. The first step is to install the package:
 
-```{r setup, eval=FALSE}
-library(LandTrendR) #OPTIONAL
+```{r setup}
+library(LandTrendR) 
 ```
 
 Before using it, a virtual environment must be generated for the python dependencies to work correctly. 
@@ -48,6 +48,8 @@ rgee::ee_Initialize() # Getting credentials from GEE to use their capabilities
 ## Getting started
 
 ### First Run - Default Parameters
+With the library installed, it's time to do run the algorithm. By default, the library contains global variables that allows to 
+run the code without any user configuration.
 
 ```{r firstRun, eval=FALSE}
   LandTrendR::LtRun()
