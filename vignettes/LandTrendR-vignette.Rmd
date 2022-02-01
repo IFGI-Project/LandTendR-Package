@@ -1,0 +1,60 @@
+---
+title: "How to use LandTrendR package"
+output: rmarkdown::html_vignette
+author: "Jorge Herrera"
+date: "16 12 2021"
+vignette: >
+  %\VignetteIndexEntry{LandTrendR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+options(rmarkdown.html_vignette.check_title=FALSE)
+```
+
+## Package Configuration
+
+This package requires configuration before going live. As it is based on the RGEE library it has a different environment configuration. The first step is to install the package:
+
+```{r setup}
+require("rgee")
+library(LandTrendR)
+
+```
+
+Before using it, a virtual environment must be generated for the python dependencies to work correctly. 
+
+```{r virtualenv, eval=FALSE}
+rgee::ee_install() # Install python environment required for GEE
+```
+
+If you have any problems, please clear the virtual environment cache of rgee with the following command 
+
+```{r cleaning, eval=FALSE}
+rgee::ee_clean_pyenv() # cleaning previous python environment (use it with precaution)
+```
+
+And restart the R version if the issue persists. 
+
+Now, before jumping into LandTrendR, it is required one more step to prepared the environments to GEE. 
+
+```{r init, eval=FALSE}
+rgee::ee_Initialize() # Getting credentials from GEE to use their capabilities
+```
+
+## Getting started
+
+### First Run - Default Parameters
+With the library installed, it's time to do run the algorithm. By default, the library contains glosbal variables that allows to 
+run the code without any user configuration.
+
+```{r firstRun, eval=FALSE}
+  LandTrendR::global_variable()
+  LandTrendR::LtRun()
+```
+  

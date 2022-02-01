@@ -1,0 +1,16 @@
+.GlobalEnv
+package:rgee
+package:LandTrendR
+devtools_shims
+org:r-lib
+org:r-lib
+tools:rstudio
+package:stats
+package:graphics
+package:grDevices
+package:utils
+package:datasets
+package:methods
+Autoloads
+org:r-lib
+package:base
